@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="ru" class="scroll-smooth dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fenix | Детская Команда</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@300;500;700;900&family=Montserrat:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Montserrat', 'sans-serif'],
+                        display: ['Unbounded', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            dark: '#0f0505', // Очень темный красный оттенок для фона
+                            light: '#fff7ed', // Orange-50
+                            primary: '#ff4500', // OrangeRed
+                            accent: '#fbbf24', // Amber-400
+                            glow: '#dc2626',   // Red-600
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-20px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #451a03;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #ff4500;
+        }
+
+        /* Background Mesh Gradient - Fire Palette */
+        :root {
+            --bg-color: #fff7ed;
+            --mesh-1: hsla(20, 100%, 85%, 1); /* Light Orange */
+            --mesh-2: hsla(45, 100%, 85%, 1); /* Light Yellow */
+            --mesh-3: hsla(0, 100%, 90%, 1);  /* Light Red */
+            --glass-bg: rgba(255, 255, 255, 0.6);
+            --glass-border: rgba(234, 88, 12, 0.1);
+            --text-main: #431407;
+            --text-muted: #78350f;
+        }
+
+        .dark:root {
+            --bg-color: #0f0505;
+            --mesh-1: hsla(15, 90%, 20%, 1); /* Dark Red-Orange */
+            --mesh-2: hsla(35, 90%, 15%, 1); /* Dark Amber */
+            --mesh-3: hsla(0, 80%, 15%, 1);  /* Dark Red */
+            --glass-bg: rgba(255, 69, 0, 0.03);
+            --glass-border: rgba(255, 69, 0, 0.1);
+            --text-main: #FFFFFF;
+            --text-muted: #fed7aa;
+        }
+
+        .a {
+            background-color: #ff4500;
+            color: #fff;
+            font-size: 15px;
+            padding: 5px;
+        }
+
+        .mesh-bg {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(at 0% 0%, var(--mesh-1) 0, transparent 50%), 
+                radial-gradient(at 50% 0%, var(--mesh-2) 0, transparent 50%), 
+                radial-gradient(at 100% 0%, var(--mesh-3) 0, transparent 50%);
+            background-attachment: fixed;
+            transition: background-color 0.5s ease;
+        }
+
+        /* Glassmorphism Utility */
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .glass-strong {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(234, 88, 12, 0.1);
+        }
+        .dark .glass-strong {
+            background: rgba(20, 5, 5, 0.8);
+            border-bottom: 1px solid rgba(255, 69, 0, 0.1);
+        }
+
+        /* Interactive Nav Items */
+        .nav-item {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
+        }
+        .nav-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255,165,0,0.2), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+        .nav-item:hover::before {
+            transform: translateX(100%);
+        }
+        
+        /* Reveal on Scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Text transitions for theme switch */
+        body, h1, h2, h3, p, span, div {
+            transition: color 0.3s ease, background-color 0.3s ease, border-color 0.3s ease;
+        }
+    </style>
+</head>
+<body class="mesh-bg text-[var(--text-main)] overflow-x-hidden selection:bg-brand-primary selection:text-white">
+
+    <!-- Settings Controls (Fixed Top Right) -->
+    <div class="fixed top-4 right-4 z-50 flex gap-3">
+        <!-- Language Switcher -->
+        <div class="relative group">
+            <button class="glass w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-transform text-[var(--text-main)]" aria-label="Change Language">
+                <i class="fa-solid fa-globe"></i>
+            </button>
+            <div class="absolute right-0 top-full mt-2 glass rounded-xl p-2 hidden group-hover:flex flex-col gap-1 min-w-[100px] transform origin-top-right transition-all">
+                <button onclick="changeLanguage('ru')" class="px-3 py-2 rounded-lg hover:bg-brand-primary/10 text-left text-sm font-display font-medium">RU Русский</button>
+                <button onclick="changeLanguage('en')" class="px-3 py-2 rounded-lg hover:bg-brand-primary/10 text-left text-sm font-display font-medium">EN English</button>
+                <button onclick="changeLanguage('es')" class="px-3 py-2 rounded-lg hover:bg-brand-primary/10 text-left text-sm font-display font-medium">ES Español</button>
+            </div>
+        </div>
+
+        <!-- Theme Switcher -->
+        <button onclick="toggleTheme()" class="glass w-10 h-10 rounded-full flex items-center justify-center hover:scale-110 transition-transform text-[var(--text-main)]" aria-label="Toggle Theme">
+            <i class="fa-solid fa-sun hidden dark:block text-yellow-400"></i>
+            <i class="fa-solid fa-moon block dark:hidden text-brand-primary"></i>
+        </button>
+    </div>
+
+    <!-- Background Blobs (Animation) -->
+    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+        <div class="absolute top-0 left-1/4 w-96 h-96 bg-brand-primary rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob dark:opacity-20 opacity-10"></div>
+        <div class="absolute top-0 right-1/4 w-96 h-96 bg-brand-accent rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-2000 dark:opacity-20 opacity-10"></div>
+        <div class="absolute -bottom-32 left-1/3 w-96 h-96 bg-brand-glow rounded-full mix-blend-screen filter blur-3xl opacity-20 animate-blob animation-delay-4000 dark:opacity-20 opacity-10"></div>
+    </div>
+
+    <!-- HERO SECTION -->
+    <header class="relative w-full min-h-screen flex flex-col items-center justify-center z-10 px-4">
+        
+        <!-- Top Title -->
+        <div class="absolute top-8 left-0 w-full text-center animate-float">
+            <span class="font-display font-black text-transparent bg-clip-text bg-gradient-to-r from-brand-accent to-brand-primary tracking-[0.3em] text-sm md:text-base uppercase opacity-80">
+                Est. 2024
+            </span>
+        </div>
+
+        <div class="text-center max-w-5xl mx-auto relative z-20">
+            <!-- Decorative line -->
+            <div class="w-1 h-24 bg-gradient-to-b from-transparent via-brand-accent to-brand-primary mx-auto mb-8"></div>
+            
+            <h1 class="font-display text-6xl md:text-8xl lg:text-9xl font-black tracking-tighter leading-none mb-6 text-[var(--text-main)] drop-shadow-2xl">
+                FE<span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-accent">NIX</span>
+            </h1>
+            
+            <p class="font-sans text-lg md:text-2xl text-[var(--text-muted)] max-w-2xl mx-auto font-light">
+                <span data-i18n="hero_slogan">Возрождаясь к победам.</span>
+                <br><span class="text-brand-primary font-semibold" data-i18n="hero_sub">Детская спортивная команда</span>
+            </p>
+
+            <!-- CTA Button -->
+            <button onclick="document.getElementById('contact').scrollIntoView()" class="mt-10 group relative px-8 py-4 font-display font-bold text-[var(--text-main)] dark:text-white bg-transparent overflow-hidden rounded-full transition-all duration-300 hover:shadow-[0_0_30px_rgba(255,69,0,0.5)] border border-brand-primary/30 dark:border-brand-accent/20">
+                <div class="absolute inset-0 w-full h-full bg-gradient-to-r from-brand-primary to-brand-accent opacity-10 dark:opacity-20 group-hover:opacity-100 transition-opacity"></div>
+                <span class="relative flex items-center gap-3 group-hover:text-white transition-colors">
+                    <span data-i18n="btn_join">ЗАПИСАТЬСЯ</span>
+                    <i class="fa-solid fa-fire transform group-hover:scale-110 transition-transform"></i>
+                </span>
+            </button>
+        </div>
+
+        <!-- Unusual Navigation (Bottom of Hero) -->
+        <div class="absolute bottom-10 md:bottom-16 w-full flex justify-center z-30">
+            <nav class="glass rounded-2xl p-2 md:p-3 flex gap-2 md:gap-4 shadow-2xl transform transition-all duration-500 hover:scale-105">
+                <a href="#why" class="nav-item px-4 py-2 md:px-6 md:py-3 rounded-xl hover:bg-brand-primary/10 flex flex-col items-center gap-1 group">
+                    <i class="fa-solid fa-fire-flame-curved text-brand-accent text-lg mb-1 group-hover:animate-bounce"></i>
+                    <span class="text-[10px] md:text-xs font-display tracking-wider uppercase" data-i18n="nav_why">Почему мы</span>
+                </a>
+                <a href="#about" class="nav-item px-4 py-2 md:px-6 md:py-3 rounded-xl hover:bg-brand-primary/10 flex flex-col items-center gap-1 group">
+                    <i class="fa-solid fa-users text-brand-primary text-lg mb-1 group-hover:animate-bounce"></i>
+                    <span class="text-[10px] md:text-xs font-display tracking-wider uppercase" data-i18n="nav_about">О нас</span>
+                </a>
+                <a href="#info" class="nav-item px-4 py-2 md:px-6 md:py-3 rounded-xl hover:bg-brand-primary/10 flex flex-col items-center gap-1 group">
+                    <i class="fa-solid fa-circle-info text-brand-glow text-lg mb-1 group-hover:animate-bounce"></i>
+                    <span class="text-[10px] md:text-xs font-display tracking-wider uppercase" data-i18n="nav_info">Инфо</span>
+                </a>
+                <a href="#contact" class="nav-item px-4 py-2 md:px-6 md:py-3 rounded-xl hover:bg-brand-primary/10 flex flex-col items-center gap-1 group">
+                    <i class="fa-solid fa-paper-plane text-[var(--text-main)] dark:text-white text-lg mb-1 group-hover:animate-bounce"></i>
+                    <span class="text-[10px] md:text-xs font-display tracking-wider uppercase" data-i18n="nav_contacts">Контакты</span>
+                </a>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Sticky Mobile/Scroll Nav -->
+    <div id="sticky-nav" class="fixed top-0 left-0 w-full z-40 transform -translate-y-full transition-transform duration-300 glass-strong shadow-sm border-b border-brand-primary/10">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div class="font-display font-bold text-xl tracking-tighter text-[var(--text-main)] flex items-center gap-2">
+                <i class="fa-solid fa-fire text-brand-primary"></i> FENIX
+            </div>
+            <button onclick="document.getElementById('mobile-menu').classList.toggle('hidden')" class="md:hidden text-[var(--text-main)] focus:outline-none">
+                <i class="fa-solid fa-bars text-2xl"></i>
+            </button>
+            <div class="hidden md:flex gap-8">
+                <a href="#why" class="text-sm font-display font-semibold text-[var(--text-main)] hover:text-brand-accent transition-colors" data-i18n="nav_why">ПОЧЕМУ МЫ</a>
+                <a href="#about" class="text-sm font-display font-semibold text-[var(--text-main)] hover:text-brand-primary transition-colors" data-i18n="nav_about">О НАС</a>
+                <a href="#info" class="text-sm font-display font-semibold text-[var(--text-main)] hover:text-brand-glow transition-colors" data-i18n="nav_info">ИНФО</a>
+                <a href="#contact" class="text-sm font-display font-semibold text-[var(--text-main)] hover:text-brand-dark dark:hover:text-white transition-colors" data-i18n="nav_contacts">КОНТАКТЫ</a>
+            </div>
+        </div>
+        <!-- Mobile Menu Dropdown -->
+        <div id="mobile-menu" class="hidden bg-white/95 dark:bg-[#1a0505]/95 backdrop-blur-xl p-4 md:hidden border-t border-brand-primary/10">
+            <a href="#why" class="block py-2 text-center text-sm font-display text-[var(--text-main)] hover:text-brand-accent" data-i18n="nav_why">ПОЧЕМУ МЫ</a>
+            <a href="#about" class="block py-2 text-center text-sm font-display text-[var(--text-main)] hover:text-brand-primary" data-i18n="nav_about">О НАС</a>
+            <a href="#info" class="block py-2 text-center text-sm font-display text-[var(--text-main)] hover:text-brand-glow" data-i18n="nav_info">ИНФО</a>
+            <a href="#contact" class="block py-2 text-center text-sm font-display text-[var(--text-main)] hover:text-white" data-i18n="nav_contacts">КОНТАКТЫ</a>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT WRAPPER -->
+    <main class="relative z-20 space-y-24 md:space-y-40 pb-24">
+
+        <!-- WHY US SECTION -->
+        <section id="why" class="container mx-auto px-4 pt-20">
+            <div class="text-center mb-16 reveal">
+                <h2 class="font-display text-4xl md:text-5xl font-bold mb-4 text-[var(--text-main)]">
+                    <span data-i18n="why_title_1">Почему</span> <span class="text-transparent bg-clip-text bg-gradient-to-r from-brand-primary to-brand-accent">Fenix?</span>
+                </h2>
+                <p class="text-[var(--text-muted)] max-w-xl mx-auto" data-i18n="why_desc">Мы не просто тренируем детей, мы зажигаем в них огонь победы и веру в себя.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                <!-- Card 1 -->
+                <div class="glass p-8 rounded-3xl relative group hover:-translate-y-2 transition-transform duration-300 reveal">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-brand-primary/20 blur-2xl rounded-full group-hover:bg-brand-primary/40 transition-colors"></div>
+                    <div class="w-14 h-14 bg-brand-primary/10 rounded-2xl flex items-center justify-center mb-6 border border-brand-primary/20 text-brand-primary text-2xl">
+                        <i class="fa-solid fa-medal"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3 text-[var(--text-main)]" data-i18n="card_1_title">Дух Победителей</h3>
+                    <p class="text-[var(--text-muted)] text-sm leading-relaxed" data-i18n="card_1_desc">Формируем характер через спорт. Учим возрождаться после неудач и идти к цели.</p>
+                </div>
+
+                <!-- Card 2 -->
+                <div class="glass p-8 rounded-3xl relative group hover:-translate-y-2 transition-transform duration-300 reveal" style="transition-delay: 100ms;">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-brand-accent/20 blur-2xl rounded-full group-hover:bg-brand-accent/40 transition-colors"></div>
+                    <div class="w-14 h-14 bg-brand-accent/10 rounded-2xl flex items-center justify-center mb-6 border border-brand-accent/20 text-brand-accent text-2xl">
+                        <i class="fa-solid fa-handshake-angle"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3 text-[var(--text-main)]" data-i18n="card_2_title">Команда-Семья</h3>
+                    <p class="text-[var(--text-muted)] text-sm leading-relaxed" data-i18n="card_2_desc">В Fenix один за всех и все за одного. Мы поддерживаем тепло отношений внутри команды.</p>
+                </div>
+
+                <!-- Card 3 -->
+                <div class="glass p-8 rounded-3xl relative group hover:-translate-y-2 transition-transform duration-300 reveal" style="transition-delay: 200ms;">
+                    <div class="absolute top-0 right-0 w-24 h-24 bg-brand-glow/20 blur-2xl rounded-full group-hover:bg-brand-glow/40 transition-colors"></div>
+                    <div class="w-14 h-14 bg-brand-glow/10 rounded-2xl flex items-center justify-center mb-6 border border-brand-glow/20 text-brand-glow text-2xl">
+                        <i class="fa-solid fa-rocket"></i>
+                    </div>
+                    <h3 class="font-display text-xl font-bold mb-3 text-[var(--text-main)]" data-i18n="card_3_title">Яркий Старт</h3>
+                    <p class="text-[var(--text-muted)] text-sm leading-relaxed" data-i18n="card_3_desc">Используем современные методики, чтобы раскрыть потенциал каждого ребенка.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- ABOUT US SECTION -->
+        <section id="about" class="container mx-auto px-4">
+            <div class="flex flex-col lg:flex-row items-center gap-16">
+                <div class="w-full lg:w-1/2 reveal">
+                    <div class="relative">
+                        <!-- Decorative Frame -->
+                        <div class="absolute -inset-4 border-2 border-brand-primary/30 rounded-[2rem] translate-x-4 translate-y-4 z-0"></div>
+                        <!-- Image Placeholder -->
+                        <div class="relative z-10 bg-gray-100 dark:bg-[#1a0505] rounded-3xl overflow-hidden aspect-video shadow-2xl flex items-center justify-center group border border-brand-primary/10">
+                            <div class="absolute inset-0 bg-gradient-to-tr from-brand-dark to-transparent opacity-10 dark:opacity-60"></div>
+                            <div class="w-full h-full bg-gradient-to-br from-orange-50 to-orange-100 dark:from-[#2a0a0a] dark:to-[#0f0505] flex flex-col items-center justify-center text-brand-primary/60">
+                                <i class="fa-solid fa-fire text-6xl mb-4 animate-pulse"></i>
+                                <span class="font-display" data-i18n="photo_placeholder">Командное Фото</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="w-full lg:w-1/2 reveal">
+                    <div class="flex items-center gap-2 mb-4">
+                        <span class="h-px w-8 bg-brand-primary"></span>
+                        <span class="text-brand-primary font-display text-sm tracking-widest uppercase" data-i18n="about_label">Наша История</span>
+                    </div>
+                    <h2 class="font-display text-4xl md:text-5xl font-bold mb-6 text-[var(--text-main)]" data-i18n="about_title">Больше чем просто <br>команда</h2>
+                    <p class="text-[var(--text-muted)] mb-6 leading-relaxed" data-i18n="about_text_1">
+                        Команда Fenix родилась из страсти к игре и желания создать место, где каждый ребенок может "зажечься". Мы верим, что внутренний огонь важнее таланта.
+                    </p>
+                    <p class="text-[var(--text-muted)] mb-8 leading-relaxed" data-i18n="about_text_2">
+                        Наш тренер помогают детям не только освоить навыки, но и закалить характер. Мы учим, что настоящая сила — это умение подниматься после падения.
+                    </p>
+                    
+                    <div class="grid grid-cols-2 gap-6">
+                        <div class="border-l-2 border-brand-primary pl-4">
+                            <div class="font-display text-3xl font-bold text-[var(--text-main)]">10+</div>
+                            <div class="text-xs text-[var(--text-muted)] uppercase tracking-wider mt-1" data-i18n="stat_1">Юных атлетов</div>
+                        </div>
+                        <div class="border-l-2 border-brand-accent pl-4">
+                            <div class="font-display text-3xl font-bold text-[var(--text-mai)]" data-i18n="title_stat_2">Летние турниры</div>
+                            <div class="text-xs text-[var(--text-muted)] uppercase tracking-wider mt-1" data-i18n="stat_2">Турниры</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ADDITIONAL INFO (Accordion Style) -->
+        <section id="info" class="container mx-auto px-4 max-w-4xl">
+            <div class="text-center mb-12 reveal">
+                <h2 class="font-display text-3xl md:text-4xl font-bold text-[var(--text-main)]" data-i18n="info_title">Важно знать</h2>
+            </div>
+
+            <div class="space-y-4 reveal">
+                <!-- Item 1 -->
+                <details class="group glass rounded-2xl open:bg-brand-primary/5 transition-colors">
+                    <summary class="flex cursor-pointer list-none items-center justify-between p-6 font-display font-semibold text-lg text-[var(--text-main)] focus:outline-none">
+                        <span data-i18n="faq_1_q">Какие возрастные группы?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-brand-primary"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-0 text-[var(--text-muted)] leading-relaxed" data-i18n="faq_1_a">
+                        Мы набираем детей от 6 до 16 лет. Группы: "Искры" (6-9 лет), "Пламя" (10-13 лет) и "Феникс" (14-16 лет).
+                    </div>
+                </details>
+
+                <!-- Item 2 -->
+                <details class="group glass rounded-2xl open:bg-brand-primary/5 transition-colors">
+                    <summary class="flex cursor-pointer list-none items-center justify-between p-6 font-display font-semibold text-lg text-[var(--text-main)] focus:outline-none">
+                        <span data-i18n="faq_2_q">Что нужно для первой тренировки?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-brand-accent"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-0 text-[var(--text-muted)] leading-relaxed" data-i18n="faq_2_a">
+                        Только удобная спортивная форма (желательно оранжевая или черная), кроссовки и бутылка воды.
+                    </div>
+                </details>
+
+                <!-- Item 3 -->
+                <details class="group glass rounded-2xl open:bg-brand-primary/5 transition-colors">
+                    <summary class="flex cursor-pointer list-none items-center justify-between p-6 font-display font-semibold text-lg text-[var(--text-main)] focus:outline-none">
+                        <span data-i18n="faq_3_q">Где проходят занятия?</span>
+                        <span class="transition group-open:rotate-180">
+                            <i class="fa-solid fa-chevron-down text-brand-glow"></i>
+                        </span>
+                    </summary>
+                    <div class="px-6 pb-6 pt-0 text-[var(--text-muted)] leading-relaxed" data-i18n="faq_3_a">
+                        У нас есть два основных зала: в центре города (ул. Ленина, 45) и в спортивном комплексе "Олимп" на западе.
+                    </div>
+                </details>
+            </div>
+        </section>
+
+        <!-- CONTACTS SECTION -->
+        <section id="contact" class="container mx-auto px-4 mb-20">
+            <div class="glass rounded-[3rem] p-8 md:p-16 overflow-hidden relative reveal border-brand-primary/20">
+                <!-- Background glow inside card -->
+                <div class="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-brand-primary/10 to-transparent pointer-events-none"></div>
+                
+                <div class="relative z-10 flex flex-col items-center text-center">
+                    <h2 class="font-display text-3xl md:text-5xl font-bold mb-6 text-[var(--text-main)]">
+                        <span data-i18n="contact_title_1">Вступай в</span> <br><span class="text-brand-primary">Fenix</span>
+                    </h2>
+                    <p class="text-[var(--text-muted)] mb-12 max-w-2xl mx-auto" data-i18n="contact_desc">Свяжитесь с нами любым удобным способом для записи на пробную бесплатную тренировку или задайте вопрос в мессенджерах.</p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 w-full max-w-4xl mb-12">
+                        <!-- Phone -->
+                        <div class="glass p-6 rounded-2xl flex flex-col items-center gap-4 hover:bg-brand-primary/10 transition-colors group cursor-pointer">
+                            <div class="w-14 h-14 rounded-full bg-brand-primary/20 text-brand-primary flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-phone"></i>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1" data-i18n="contact_call">Позвонить нам</div>
+                                <span class="font-sans font-medium text-lg text-[var(--text-main)]">+7 (999) 000-00-00</span>
+                            </div>
+                        </div>
+
+                        <!-- Email -->
+                        <div class="glass p-6 rounded-2xl flex flex-col items-center gap-4 hover:bg-brand-primary/10 transition-colors group cursor-pointer">
+                            <div class="w-14 h-14 rounded-full bg-brand-accent/20 text-brand-accent flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-envelope"></i>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1" data-i18n="contact_email">Написать письмо</div>
+                                <span class="font-sans font-medium text-lg text-[var(--text-main)]">-</span>
+                            </div>
+                        </div>
+
+                        <!-- Address -->
+                        <div class="glass p-6 rounded-2xl flex flex-col items-center gap-4 hover:bg-brand-primary/10 transition-colors group cursor-pointer">
+                            <div class="w-14 h-14 rounded-full bg-brand-glow/20 text-brand-glow flex items-center justify-center text-2xl group-hover:scale-110 transition-transform">
+                                <i class="fa-solid fa-location-dot"></i>
+                            </div>
+                            <div class="text-center">
+                                <div class="text-xs text-[var(--text-muted)] uppercase tracking-wider mb-1" data-i18n="contact_visit">Местоположение</div>
+                                <span class="font-sans font-medium text-lg text-[var(--text-main)]" data-i18n="contact_address">Dehesa de Campoamor</span> 
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-6 text-[var(--text-main)]">
+                        <a href="#" class="w-16 h-16 rounded-full border border-[var(--text-muted)]/20 flex items-center justify-center hover:bg-brand-primary hover:text-white transition-all duration-300 hover:scale-110 hover:shadow-lg hover:border-transparent">
+                            <i class="fa-brands fa-instagram text-3xl"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="border-t border-brand-primary/10 py-8 bg-brand-primary/5 backdrop-blur-sm">
+        <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center">
+            <div class="text-2xl font-display font-black tracking-tighter text-[var(--text-main)] mb-4 md:mb-0 flex items-center gap-2">
+                 <i class="fa-solid fa-fire text-brand-primary text-xl"></i> FENIX
+            </div>
+            <div class="text-[var(--text-muted)] text-sm">
+                © 2025 Fenix Team. From <span class="a">YelAr (Jangir Armanov)</span> to <span class="a">Fenix</span> with 🔥.
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // --- TRANSLATION DATA ---
+        const translations = {
+            ru: {
+                hero_slogan: "Возрождаясь к победам.",
+                hero_sub: "Детская спортивная команда",
+                btn_join: "ЗАПИСАТЬСЯ",
+                nav_why: "Почему мы", nav_about: "О нас", nav_info: "Инфо", nav_contacts: "Контакты",
+                why_title_1: "Почему", why_desc: "Мы не просто тренируем детей, мы зажигаем в них огонь победы и веру в себя.",
+                card_1_title: "Дух Победителей", card_1_desc: "Формируем характер через спорт. Учим возрождаться после неудач и идти к цели.",
+                card_2_title: "Команда-Семья", card_2_desc: "В Fenix один за всех и все за одного. Мы поддерживаем тепло отношений внутри команды.",
+                card_3_title: "Яркий Старт", card_3_desc: "Используем современные методики, чтобы раскрыть потенциал каждого ребенка.",
+                photo_placeholder: "Командное Фото",
+                about_label: "Наша История", about_title: "Больше чем просто <br>команда",
+                about_text_1: "Команда Fenix родилась из страсти к игре и желания создать место, где каждый ребенок может 'зажечься'. Мы верим, что внутренний огонь важнее таланта.",
+                about_text_2: "Наши тренеры помогают детям не только освоить навыки, но и закалить характер. Мы учим, что настоящая сила — это умение подниматься после падения.",
+                stat_1: "Юных атлетов", stat_2: "Турниров в год",
+                info_title: "Важно знать",
+                faq_1_q: "Какие возрастные группы?", faq_1_a: "Мы набираем детей от 6 до 16 лет. Группы: 'Искры' (6-9 лет), 'Пламя' (10-13 лет) и 'Феникс' (14-16 лет).",
+                faq_2_q: "Что нужно для первой тренировки?", faq_2_a: "Только удобная спортивная форма (желательно оранжевая или черная), кроссовки и бутылка воды.",
+                faq_3_q: "Где проходят занятия?", faq_3_a: "У нас есть два основных зала: в центре города (ул. Ленина, 45) и в спортивном комплексе 'Олимп' на западе.",
+                contact_title_1: "Вступай в", contact_desc: "Свяжитесь с нами любым удобным способом для записи на пробную бесплатную тренировку или задайте вопрос в мессенджерах.",
+                contact_call: "Позвонить нам", contact_email: "Написать письмо", contact_visit: "Приехать в гости", contact_address: "СК 'Арена', Москва"
+            },
+            en: {
+                hero_slogan: "Rising to victory.",
+                hero_sub: "Children's Sports Team",
+                btn_join: "JOIN US",
+                nav_why: "Why Us", nav_about: "About", nav_info: "Info", nav_contacts: "Contacts",
+                why_title_1: "Why", why_desc: "We don't just train kids, we ignite the fire of victory and self-belief in them.",
+                card_1_title: "Winners Spirit", card_1_desc: "Building character through sport. Teaching to rise after failures and aim for the goal.",
+                card_2_title: "Team Family", card_2_desc: "In Fenix, it's one for all and all for one. We maintain warm relationships within the team.",
+                card_3_title: "Bright Start", card_3_desc: "We use modern methods to unlock every child's potential.",
+                photo_placeholder: "Team Photo",
+                about_label: "Our History", about_title: "More than just <br>a team",
+                about_text_1: "Fenix was born from a passion for the game and a desire to create a place where every child can shine. We believe inner fire is more important than talent.",
+                about_text_2: "Our coach help children not only master skills but also temper their character. We teach that true strength is the ability to rise after a fall.",
+                title_stat_2: "Summer Tournaments",
+                stat_1: "Young Athletes", stat_2: "Tournaments/Year",
+                info_title: "Important to Know",
+                faq_1_q: "What are the age groups?", faq_1_a: "We recruit children from 6 to 16. Groups: 'Sparks' (6-9), 'Flame' (10-13), and 'Phoenix' (14-16).",
+                faq_2_q: "What do I need for the first practice?", faq_2_a: "Just comfortable sportswear (preferably orange or black), sneakers, and a water bottle.",
+                faq_3_q: "Where are the classes held?", faq_3_a: "We have two main halls: in the city center (Lenina St., 45) and at the 'Olymp' sports complex in the west.",
+                contact_title_1: "Join", contact_desc: "Contact us in any convenient way to sign up for a free trial training or ask a question in messengers.",
+                contact_call: "Call Us", contact_email: "Write Email", contact_visit: "Location", contact_address: "Dehesa de Campoamor"
+            },
+            es: {
+                hero_slogan: "Renaciendo hacia la victoria.",
+                hero_sub: "Equipo Deportivo Infantil",
+                btn_join: "ÚNETE",
+                nav_why: "Por qué", nav_about: "Nosotros", nav_info: "Info", nav_contacts: "Contactos",
+                why_title_1: "Por qué", why_desc: "No solo entrenamos niños, encendemos en ellos el fuego de la victoria y la fe en sí mismos.",
+                card_1_title: "Espíritu Ganador", card_1_desc: "Formamos el carácter a través del deporte. Enseñamos a renacer tras los fracasos y alcanzar la meta.",
+                card_2_title: "Familia de Equipo", card_2_desc: "En Fenix, uno para todos y todos para uno. Mantenemos relaciones cálidas dentro del equipo.",
+                card_3_title: "Inicio Brillante", card_3_desc: "Utilizamos métodos modernos para desbloquear el potencial de cada niño.",
+                photo_placeholder: "Foto del Equipo",
+                about_label: "Nuestra Historia", about_title: "Más que solo <br>un equipo",
+                about_text_1: "Fenix nació de la pasión por el juego y el deseo de crear un lugar donde cada niño pueda brillar. Creemos que el fuego interior es más importante que el talento.",
+                about_text_2: "Nuestro entrenador ayudan a los niños no solo a dominar habilidades, sino también a templar su carácter.",
+                title_stat_2: "Torneos de Verano",
+                stat_1: "Jóvenes Atletas", stat_2: "Torneos al año",
+                info_title: "Importante saber",
+                faq_1_q: "¿Qué grupos de edad hay?", faq_1_a: "Reclutamos niños de 6 a 16 años. Grupos: 'Chispas' (6-9), 'Llama' (10-13) y 'Fénix' (14-16).",
+                faq_2_q: "¿Qué necesito para el primer entrenamiento?", faq_2_a: "Solo ropa deportiva cómoda (preferiblemente naranja o negra), zapatillas y una botella de agua.",
+                faq_3_q: "¿Dónde son las clases?", faq_3_a: "Tenemos dos salas principales: en el centro (calle Lenina, 45) y en el complejo deportivo 'Olimp' en el oeste.",
+                contact_title_1: "Únete a", contact_desc: "Contáctanos de cualquier forma conveniente para inscribirte en un entrenamiento de prueba gratuito.",
+                contact_call: "Llámanos", contact_email: "Escribir email", contact_visit: "Locación", contact_address: "Dehesa de Campoamor"
+            }
+        };
+
+        // --- THEME LOGIC ---
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+            }
+        }
+
+        // Check Local Storage for Theme
+        if (localStorage.theme === 'light' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: light)').matches)) {
+            document.documentElement.classList.remove('dark');
+        } else {
+            document.documentElement.classList.add('dark');
+        }
+
+        // --- LANGUAGE LOGIC ---
+        function changeLanguage(lang) {
+            const elements = document.querySelectorAll('[data-i18n]');
+            elements.forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if (translations[lang][key]) {
+                    // Handle HTML inside strings (like <br>) safely
+                    el.innerHTML = translations[lang][key];
+                }
+            });
+            document.documentElement.lang = lang;
+        }
+
+        // --- SCROLL & ANIMATIONS ---
+        const observerOptions = {
+            root: null,
+            rootMargin: '0px',
+            threshold: 0.1
+        };
+
+        const observer = new IntersectionObserver((entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.reveal').forEach(el => {
+            observer.observe(el);
+        });
+
+        const stickyNav = document.getElementById('sticky-nav');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 600) {
+                stickyNav.classList.remove('-translate-y-full');
+            } else {
+                stickyNav.classList.add('-translate-y-full');
+                document.getElementById('mobile-menu').classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+</html>
